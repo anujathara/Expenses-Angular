@@ -1,49 +1,48 @@
-import { Component, OnInit } from '@angular/core';
-import { MatButtonToggleGroup } from '@angular/material/button-toggle';
-import { Expense } from 'src/app/models/expense.model';
-import { ExpenseService } from 'src/app/services/expense.service';
+import { MediaMatcher } from '@angular/cdk/layout';
+import { ChangeDetectorRef, Component, OnDestroy, Inject } from '@angular/core';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { Menu } from 'src/app/models/expense.model';
+import { AddModifyExpenseComponent } from 'src/app/add-modify-expense/add-modify-expense.component';
 
 @Component({
   selector: 'app-expense-form',
   templateUrl: './expense-form.component.html',
   styleUrls: ['./expense-form.component.scss']
 })
-export class ExpenseFormComponent implements OnInit {
-  displayedColumns: string[] = [];
-  dataSource: Expense[] = [];
+export class ExpenseFormComponent implements OnDestroy {
+  mobileQuery: MediaQueryList;
 
-  tables = [0];
+  fillerNav = Array('Add New', 'jkahsjkdhajskdh');
 
-  constructor(private ExpenseService: ExpenseService) {
-    this.displayedColumns.length = 7;
-    // this.displayedColumns.fill('filler');
+  menuItems: Menu[] = [
+    { link: 'Add', name: 'Add New' },
+    { link: 'Search', name: 'Search' },
+  ];
 
-    // The first two columns should be position and name; the last two columns: weight, symbol
-    this.displayedColumns[0] = 'Date';
-    this.displayedColumns[1] = 'Purpose';
-    this.displayedColumns[2] = 'Category';
-    this.displayedColumns[3] = 'Type';
-    this.displayedColumns[4] = 'Description';
-    this.displayedColumns[5] = 'Labour';
-    this.displayedColumns[6] = 'Amount';
+  animal = 'Dhanu';
+  name = 'Anu';
+
+  private _mobileQueryListener: () => void;
+
+  constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher, public dialog: MatDialog) {
+    this.mobileQuery = media.matchMedia('(max-width: 600px)');
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
-  ngOnInit(): void {
-    this.ExpenseService.loadData()
-      .subscribe(
-        response => {
-          console.log(response);
-          this.dataSource = response.recordset;
-          // this.submitted = true;
-        },
-        error => {
-          console.log(error);
-        });
+  openDialog(link: any): void {
+    const dialogRef = this.dialog.open(AddModifyExpenseComponent, {
+      width: '250px',
+      data: {name: link, animal: this.animal}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      this.animal = result;
+    });
   }
 
-
-  /** Whether the button toggle group contains the id as an active value. */
-  isSticky(buttonToggleGroup: MatButtonToggleGroup, id: string) {
-    return (buttonToggleGroup.value || []).indexOf(id) !== -1;
+  ngOnDestroy(): void {
+    this.mobileQuery.removeListener(this._mobileQueryListener);
   }
 }

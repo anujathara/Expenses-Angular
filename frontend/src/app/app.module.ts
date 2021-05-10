@@ -50,11 +50,15 @@ import {MatTreeModule} from '@angular/material/tree';
 import {OverlayModule} from '@angular/cdk/overlay';
 
 import { HttpClientModule } from '@angular/common/http';
+import { ExpenseListComponent } from './expense-list/expense-list.component';
+import { AddModifyExpenseComponent } from './add-modify-expense/add-modify-expense.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ExpenseFormComponent
+    ExpenseFormComponent,
+    ExpenseListComponent,
+    AddModifyExpenseComponent
   ],
   imports: [
     BrowserModule,

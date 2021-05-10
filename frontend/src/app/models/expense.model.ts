@@ -7,3 +7,13 @@ export class Expense {
     Labour?: Number;
     Amount?: Number;
 }
+
+export class Menu {
+    link?: string;
+    name?: string;
+}
+
+export interface DialogData {
+    animal: string;
+    name: string;
+}
